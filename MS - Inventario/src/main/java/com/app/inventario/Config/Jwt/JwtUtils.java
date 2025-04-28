@@ -1,12 +1,11 @@
-package com.app.jwtauth.config.jwt;
+package com.app.inventario.Config.Jwt;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
@@ -15,9 +14,12 @@ import java.security.Key;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.function.Function;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 @Service
+@RequiredArgsConstructor
 public class JwtUtils {
 
     @Value("${auth.app.jwtSecret}")
@@ -46,6 +48,8 @@ public class JwtUtils {
     }
 
     private String generateTokenFromUsername(HashMap<String, Object> extraClaims, UserDetails user) {
+        logger.info("Generando token con clave: {}", jwtSecret.substring(0, 4) + "...");
+
         Date issuedAt = new Date();
         Date expiration = new Date(System.currentTimeMillis() + jwtExpirationMs);
 
@@ -62,7 +66,8 @@ public class JwtUtils {
         return token;
     }
 
-    private Claims getAllClaims(String token) {
+    public Claims getAllClaims(String token) {
+        logger.info("Validando token con clave: {}", jwtSecret.substring(0, 4) + "...");
         try {
             return Jwts.parser()
                     .setSigningKey(getSigningKey())
@@ -86,6 +91,7 @@ public class JwtUtils {
         return getExpiration(token).before(new Date());
     }
     public boolean isTokenValid(String token, UserDetails userDetails) {
+        logger.info("Validando si el token");
         try {
             // Validación EXPLÍCITA de la firma primero
             Claims claims = Jwts.parser()
