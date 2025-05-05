@@ -9,4 +9,7 @@ public interface PermissionRepository extends JpaRepository<Permission, Long> {
     boolean existsByName(String roleName);
 
     Optional<Permission> findByName(String name);
+
+    void delete(Permission permission);
+
 }
