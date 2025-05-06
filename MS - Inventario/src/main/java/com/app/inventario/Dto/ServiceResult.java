@@ -1,12 +1,8 @@
-package com.app.jwtauth.dto;
-
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+package com.app.inventario.Dto;
 
 import java.util.ArrayList;
 import java.util.List;
+
 public class ServiceResult<T> {
 
     private T data;
