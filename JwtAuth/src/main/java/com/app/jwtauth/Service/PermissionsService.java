@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.regex.Pattern;
 
 @Service
 @RequiredArgsConstructor
@@ -19,6 +20,7 @@ public class PermissionsService {
 
     private final PermissionRepository permissionRepository;
     private static final Logger logger = LoggerFactory.getLogger(PermissionsService.class);
+
 
     public List<Permission> getAllPermissions(){
         return permissionRepository.findAll();

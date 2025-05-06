@@ -87,17 +87,14 @@ public class JwtUtils {
     }
     public boolean isTokenValid(String token, UserDetails userDetails) {
         try {
-            // Validación EXPLÍCITA de la firma primero
             Claims claims = Jwts.parser()
                     .setSigningKey(getSigningKey())
                     .build()
                     .parseClaimsJws(token)
                     .getBody();
 
-            // Luego validar usuario y expiración
             String username = claims.getSubject();
             boolean isExpired = claims.getExpiration().before(new Date());
-
             return username.equals(userDetails.getUsername()) && !isExpired;
         } catch (Exception e) {
             logger.error("Error validando token: {}", e.getMessage());

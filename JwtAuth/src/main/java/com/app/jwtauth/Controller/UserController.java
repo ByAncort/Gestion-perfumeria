@@ -50,7 +50,7 @@ public class UserController {
     public HttpStatus userAccess() {
         return HttpStatus.OK;
     }
-    
+
     @PutMapping("/{userId}/assign-role")
     public ResponseEntity<?> assignRole(@PathVariable Long userId, @RequestParam String roleName) {
         ServiceResult<User> result = userService.assignRoleToUser(userId, roleName);
