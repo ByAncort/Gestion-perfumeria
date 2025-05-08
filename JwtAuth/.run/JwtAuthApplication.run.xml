@@ -1,0 +1,9 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="JwtAuthApplication" type="Application" factoryName="Application">
+    <option name="MAIN_CLASS_NAME" value="com.app.jwtauth.JwtAuthApplication" />
+    <module name="AUTHJWT" />
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>
