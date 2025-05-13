@@ -15,7 +15,8 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Entity
-@Getter @Setter
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder@Table(name = "users")

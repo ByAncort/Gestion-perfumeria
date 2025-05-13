@@ -40,9 +40,7 @@ public class UserController {
 
     @GetMapping("/all")
     public Object AsignarRole(Authentication authentication) {
-        String[] requiredPermissions = {"ADMIN_PERMISSIONS"};
-        verifyService.verifyPermissions(requiredPermissions, authentication
-                , HttpStatus.UNAUTHORIZED.name());
+
         return userService.getAllUser();
     }
 

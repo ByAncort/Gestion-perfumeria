@@ -1,6 +1,7 @@
 package com.app.inventario.Models;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Min;
 import lombok.*;
 
 import java.math.BigDecimal;
@@ -46,7 +47,8 @@ public class Producto {
 
     @Builder.Default
     private Boolean activo = true;
-
+    @Min(0)
+    private Integer stock = 0;
     @Column(name = "fecha_creacion")
     @Builder.Default
     private LocalDateTime fechaCreacion = LocalDateTime.now();

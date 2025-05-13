@@ -1,5 +1,6 @@
 package com.app.inventario.Dto;
 
+import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
 @Data
@@ -7,8 +8,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CategoriaDto {
-    private Long id;
+    @NotBlank(message = "El nombre es obligatorio")
     private String nombre;
     private String descripcion;
-    private int totalProductos;
 }
