@@ -52,7 +52,6 @@ public class AuthService {
 
     public AuthResponse login(LoginRequest request) {
         try {
-            // Single authentication point
             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
                             request.getUsername(),
@@ -60,17 +59,21 @@ public class AuthService {
                     )
             );
 
-            // Get the authenticated user
             UserDetails user = (UserDetails) authentication.getPrincipal();
 
             Date issuedAt = new Date();
             Date expiration = new Date(System.currentTimeMillis() + jwtExpirationMs);
             String token = jwtService.getToken(user);
+            User userFind= userRepository.findByUsername(user.getUsername())
+                    .orElseThrow(()-> new RuntimeException("Usuario no encontrado"));
 
             return AuthResponse.builder()
                     .issuedAt(issuedAt)
                     .expiresAt(expiration)
                     .token(token)
+                    .tokenType("Bearer")
+                    .roles(userFind.getRoles())
+                    .username(userFind.getUsername())
                     .build();
 
         } catch (BadCredentialsException e) {
@@ -91,6 +94,7 @@ public class AuthService {
                 .email(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword()))
                 .roles(Collections.singleton(userRole))
+
                 .enabled(true)
                 .build();
 

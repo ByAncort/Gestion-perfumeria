@@ -1,6 +1,7 @@
 package com.app.jwtauth.config.jwt;
 
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
@@ -93,12 +94,24 @@ public class JwtUtils {
                     .parseClaimsJws(token)
                     .getBody();
 
-            String username = claims.getSubject();
-            boolean isExpired = claims.getExpiration().before(new Date());
-            return username.equals(userDetails.getUsername()) && !isExpired;
+            final String username = claims.getSubject();
+            final boolean isExpired = claims.getExpiration().before(new Date());
+
+            if (!username.equals(userDetails.getUsername())) {
+                throw new Exception("Usuario no coincide");
+            }
+
+            return !isExpired;
+
+        } catch (ExpiredJwtException ex) {
+            logger.warn("Token expirado: {}", ex.getMessage());
+            throw new RuntimeException(ex);
         } catch (Exception e) {
             logger.error("Error validando token: {}", e.getMessage());
-            return false;
+            try {
+                throw new Exception("Error procesando JWT", e);
+            } catch (Exception ex) {
+                throw new RuntimeException(ex);
+            }
         }
-    }
-}
+    }}

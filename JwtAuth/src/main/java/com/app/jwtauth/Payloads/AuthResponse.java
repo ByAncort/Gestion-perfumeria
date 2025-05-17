@@ -21,7 +21,6 @@ public class AuthResponse {
     private Date expiresAt;
     private String username;
     private Set<Role> roles;
-    private String refreshToken;
     private String message;
 
 }
