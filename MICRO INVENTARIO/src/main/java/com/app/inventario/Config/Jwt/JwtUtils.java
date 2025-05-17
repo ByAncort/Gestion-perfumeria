@@ -38,33 +38,13 @@ public class JwtUtils {
         return getClaims(token, Claims::getSubject);
     }
 
-    public String getToken(UserDetails user) {
-        return generateTokenFromUsername(new HashMap<>(), user);
-    }
 
     public Key getSigningKey() {
         byte[] keyBytes = Decoders.BASE64.decode(jwtSecret);
         return Keys.hmacShaKeyFor(keyBytes);
     }
 
-    private String generateTokenFromUsername(HashMap<String, Object> extraClaims, UserDetails user) {
-        logger.info("Generando token con clave: {}", jwtSecret.substring(0, 4) + "...");
 
-        Date issuedAt = new Date();
-        Date expiration = new Date(System.currentTimeMillis() + jwtExpirationMs);
-
-        extraClaims.put("issuedAt", issuedAt);
-        extraClaims.put("expiration", expiration);
-
-        String token = Jwts.builder()
-                .claims(extraClaims)
-                .subject(user.getUsername())
-                .issuedAt(issuedAt)
-                .expiration(expiration)
-                .signWith(getSigningKey(), SignatureAlgorithm.HS256)
-                .compact();
-        return token;
-    }
 
     public Claims getAllClaims(String token) {
         logger.info("Validando token con clave: {}", jwtSecret.substring(0, 4) + "...");
@@ -91,23 +71,41 @@ public class JwtUtils {
         return getExpiration(token).before(new Date());
     }
     public boolean isTokenValid(String token, UserDetails userDetails) {
-        logger.info("Validando si el token");
         try {
-            // Validación EXPLÍCITA de la firma primero
             Claims claims = Jwts.parser()
                     .setSigningKey(getSigningKey())
                     .build()
                     .parseClaimsJws(token)
                     .getBody();
 
-            // Luego validar usuario y expiración
-            String username = claims.getSubject();
-            boolean isExpired = claims.getExpiration().before(new Date());
+            final String username = claims.getSubject();
+            final boolean isExpired = claims.getExpiration().before(new Date());
 
-            return username.equals(userDetails.getUsername()) && !isExpired;
+            if (!username.equals(userDetails.getUsername())) {
+                throw new JwtValidationException("Usuario no coincide");
+            }
+
+            if (isExpired) {
+                throw new JwtValidationException("Token expirado");
+            }
+
+            return true;
+
+        } catch (JwtValidationException e) {
+            throw e;
         } catch (Exception e) {
-            logger.error("Error validando token: {}", e.getMessage());
-            return false;
+            throw new JwtProcessingException("Error procesando JWT: " + e.getMessage(), e); // 500
+        }
+    }
+    public class JwtValidationException extends RuntimeException {
+        public JwtValidationException(String message) {
+            super(message);
+        }
+    }
+
+    public class JwtProcessingException extends RuntimeException {
+        public JwtProcessingException(String message, Throwable cause) {
+            super(message, cause);
         }
     }
 }
